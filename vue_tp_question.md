@@ -7,3 +7,5 @@
 
 `<meta name="csrf-token" content="{{ csrf_token() }}">`
 `window.Laravel = <?php echo json_encode(['csrfToken' => csrf_token()]); ?>`
+
+同步异步promise (https://juejin.im/post/6844904161482375181)
