@@ -20,3 +20,9 @@
 5. 对项目任务的分解，干了什么，怎么干的，结果如何
 
 6. 商城service实现，1. PDO封装的单例数据库链接类 2. 引入了PHPUnit单元测试(几个断言函数) 3. Postman api接口测试(https://lailin.xyz/post/45050.html)
+
+7. 利用SQS实现调用脚本/调用类和函数
+
+8. shell实现脚本自启管理 -> supservisor
+
+9. 
