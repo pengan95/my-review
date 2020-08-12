@@ -7,11 +7,27 @@
     * 老代码重构优化，升级项目的php版本为7.0, 
     * 数据库连接更新为PDO, 进行命名参数和参数绑定(prepare); 对象映射(setFetchMode())
     Mysqli (mysqli_fetch_object(res,'O')) 
-    * 
+    * 数据库结构优化，（大表拆分，user_address） 主从同步，读写分离
+    * redis 用作商家缓存，用户信息缓存，session共享 redis主要类型 key->字符串 （list,集合，有序集合，hash字典）
+    * hash用来存储用户对象信息（数组）不需要解析
+    * 共享session -> nginx反向代理
 
+    涉及到的问题
+
+    * 缓存击穿（热点数据被高并发的访问，缓存失效时导致访问数据库）互斥锁 (setnx)/自己维护缓存过期，缓存穿透（查询一个不存在的数据，没有进行缓存，一直进行数据库访问）空数据进行缓存/[布隆过滤器](http://imhuchao.com/1271.html)，缓存雪崩（缓存集体过期）
+    * [redis主要类型和应用](https://juejin.im/post/6844903951502934030)
+        * key->字符串 （list,集合，有序集合，hash字典） 
+        * string 互斥锁，用户的点击数。。。
+        * hash用来存储用户信息，不需要解析（数组）
+        * list可以用来做简单队列，和sort set一起使用可以构建一个有序队列 时间线（快速取一段区间）
+        * set可以快速求交集 并集 差集，用户关系；去重操作
+        * 有序集合 排行榜（商家推荐）
+    * [redis为什么是单线程](https://draveness.me/whys-the-design-redis-single-thread/)
+    * 数据库主从同步，读写分离
     具体描述：
+    需求：对前台页面进行改版，舍弃了zendframe框架，和公司coupon，deal site站点通过反向代理进行合并，依靠extrabux.com的流量增加曝光率，业务上不依赖，对原有系统主要功能编写文档，并设置任务计划。对老代码中的sql语句进行优化，分离大量join操作，在代码中实现；用户信息的缓存通过redis hash存储减少解析序列化数据的操作；
     
-    对老代码进行重构优化，
+    
 2. Extrabux商家出站链接最终有效性检测
 
     项目描述 
@@ -25,22 +41,38 @@
     项目中可能涉及的问题
     * Promise.race() Promise.all()的区别 (https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)
     * mysql连接池的 `connection.release();` `connection.end(function(err){});` `connection.destroy();` (https://juejin.im/post/6844903746506326023)
-3. 提现系统分离
-
-    重点：jwt 接口实现， 引入单元测试
 
     具体描述
-4. 提现后台工具
-    
-    重点：thinkphp + vue.js
-5. 消息通知系统
+    需求：一些商家的出站不能正常返回到商家主页，现有商家8000多家，运营团队无法快速的发现这些商家
+    解决方案：一张商家任务表，初始化任务表，在线商家，写入或更改状态，下线商家状态置为 offline不做检测，循环遍历 商家 并行访问多个，多次重试，
+    改进：使用任务队列
+3. 提现系统分离和运营工具集
 
+    重点：jwt 接口实现， 引入单元测试，thinkphp + vue.js
+
+    项目描述：
+    * 三层架构（表示层，业务逻辑层，数据访问层）[与mvc的区别](https://juejin.im/post/6844903479568252935)
+    * mvc架构 thinkphp + vue.js  没有使用 mvvc 单页应用SPA
+    * 并发，锁的机制（悲观锁）,事务隔离级别
+    * 数据库调优经历 主从同步导致的数据不一致问题
+    * CAS(Camper And Set)防止并发
+    * [1](https://www.cnblogs.com/chenqionghe/p/4845693.html) [2](https://segmentfault.com/a/1190000012773157) [3](https://tech.meituan.com/2014/08/20/innodb-lock.html)行锁统计情况`show status like 'innodb_row_lock%';` 表锁使用情况`show open tables where in_use > 0;` `SHOW INNODB STATUS` 查看死锁
+
+    具体描述
+    需求：对用户账户和提现业务拆分成独立的系统，http接口进行数据交互，运营工具主要实现提现处理流程，
+    解决方案：thinkphp + vue.js 快速搭建后台服务；修改公司公用的接口的token模式，采用jwt节省，不需要将token保存在数据库；并引入单元测试，对接口进行测试；
+
+
+4. 消息通知系统
+
+    需求：对用户的通知管理，实现邮件，站内信，手机短信和app通知统一管理，利用sqs队列，对第三方的日志信息和系统的日志进行分析，
     重点：日志分析，sqs队列
-6. Google Sheet API的二次开发 
+5. Google Sheet API的二次开发 
 
     重点：
     1. csv/excel 转 google sheet yeild 生成器的使用 (作为骚操作来说)
     2. 读取google sheet 标题列对象，数据列对象
+    3. 使用postman工具对提现接口进行测试
 
 
 
@@ -48,8 +80,23 @@
 
 ## 简历之外的知识点
 1. redis,memcached,mongodb区别
+    1. rd 多种数据结构 string, list, set, sort set, hash,
+    2. 支持持久化
+    3. 
 2. 非关系型数据库有哪些？ 根据种类去答
 3. PHP opcode opcache
 4. PHP 数组 -> hashtable 
 6. vue.js, webpack, thinkphp, SPA(单页应用，Single-page application) 嵌入SPA
 7. include require的区别 ，include 是包含(将文件读入并执行,有返回值,类似一个语句，执行到了) require 是要求（自身会被文件内容替换，类似一个嵌入） *_once 会判断之前是否引入过则不再引入且不执行
+8. 主从同步导致的数据不一致问题解决路径
+    1. 在运营同学修改商家信息时，修改完之后数据并没有更新，但操作提示是成功的；当时并没有想到是主从不同步的问题，于是去看了从库的数据的确没有更新，
+9. mvc模式
+    m是模型，v视图，c控制器，三者之间相关
+
+10. 大型网站优化
+    1. 针对静态资源的优化，图片，js,css base64编码或者sprit图，js,css进行合并和格式化，
+    2. 动态语言静态化，smarty缓存 ob系列函数
+    3. 开启opcache，减少php-fpm的开销
+    4. 数据库缓存
+    5. 高并发情况下就要用到负载均衡，数据库主从
+    6. 
