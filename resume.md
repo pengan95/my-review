@@ -1,3 +1,6 @@
+## 自我介绍
+我叫黄朋安，毕业于河南大学计算机与信息工程学院，学历是本科，毕业后进入上海美锴信息技术有限公司，主要从事Extrbux.com返利站点的开发，目前主要负责提现业务的开发和维护工作，同时也会根据新的需求进行功能迭代
+
 ## 项目经验
 1. Extrabux.com前台代码重构
     
@@ -28,7 +31,7 @@
     需求：对前台页面进行改版，舍弃了zendframe框架，和公司coupon，deal site站点通过反向代理进行合并，依靠extrabux.com的流量增加曝光率，业务上不依赖，对原有系统主要功能编写文档，并设置任务计划。对老代码中的sql语句进行优化，分离大量join操作，在代码中实现；用户信息的缓存通过redis hash存储减少解析序列化数据的操作；
     
     
-2. Extrabux商家出站链接最终有效性检测
+2. Extrabux商家出站链接最终有效性检测工具
 
     项目描述 
     * node+puppeteer 实现
@@ -59,8 +62,7 @@
     * [1](https://www.cnblogs.com/chenqionghe/p/4845693.html) [2](https://segmentfault.com/a/1190000012773157) [3](https://tech.meituan.com/2014/08/20/innodb-lock.html)行锁统计情况`show status like 'innodb_row_lock%';` 表锁使用情况`show open tables where in_use > 0;` `SHOW INNODB STATUS` 查看死锁
 
     具体描述
-    需求：对用户账户和提现业务拆分成独立的系统，http接口进行数据交互，运营工具主要实现提现处理流程，
-    解决方案：thinkphp + vue.js 快速搭建后台服务；修改公司公用的接口的token模式，采用jwt节省，不需要将token保存在数据库；并引入单元测试，对接口进行测试；
+    需求：提现系统包含两个部分，提现的Service端和提现运营工具，Service为不同系统提供提现业务的数据接口；以多态取代条件式
 
 
 4. 消息通知系统
