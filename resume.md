@@ -14,6 +14,7 @@
     * redis 用作商家缓存，用户信息缓存，session共享 redis主要类型 key->字符串 （list,集合，有序集合，hash字典）
     * hash用来存储用户对象信息（数组）不需要解析
     * 共享session -> nginx反向代理
+    * proxy_cookie_domain 
 
     涉及到的问题
 
@@ -59,7 +60,11 @@
     * 并发，锁的机制（悲观锁）,事务隔离级别
     * 数据库调优经历 主从同步导致的数据不一致问题
     * CAS(Camper And Set)防止并发
-    * [1](https://www.cnblogs.com/chenqionghe/p/4845693.html) [2](https://segmentfault.com/a/1190000012773157) [3](https://tech.meituan.com/2014/08/20/innodb-lock.html)行锁统计情况`show status like 'innodb_row_lock%';` 表锁使用情况`show open tables where in_use > 0;` `SHOW INNODB STATUS` 查看死锁
+    * [1]( ://www.cnblogs.com/chenqionghe/p/4845693.html) [2](https://segmentfault.com/a/1190000012773157) [3](https://tech.meituan.com/2014/08/20/innodb-lock.html)行锁统计情况`show status like 'innodb_row_lock%';` 表锁使用情况`show open tables where in_use > 0;` `SHOW INNODB STATUS` 查看死锁
+
+    策略模式：自动支付有两种形式 -> 通过配置判断使用哪一种，实现多种策略
+    模板模式：异步的自动支付 -> 固定的一个流程，paypal, 礼品卡, 等第三方服务异步方式请求支付结果。
+    适配器模式：不同第三方接口在系统中实现相同的方式
 
     具体描述
     需求：提现系统包含两个部分，提现的Service端和提现运营工具，Service为不同系统提供提现业务的数据接口；以多态取代条件式
@@ -68,7 +73,8 @@
 4. 消息通知系统
 
     需求：对用户的通知管理，实现邮件，站内信，手机短信和app通知统一管理，利用sqs队列，对第三方的日志信息和系统的日志进行分析，
-    重点：日志分析，sqs队列
+    重点：日志分析，sqs队列、
+    优化：可能会存在优先级不同的消息，通过redis来实现有序队列，阻塞锁的形式，如果a队列里存在消息需要处理则先处理a a>b,并设置阻塞锁其他队列不去读取
 5. Google Sheet API的二次开发 
 
     重点：
@@ -102,3 +108,7 @@
     4. 数据库缓存
     5. 高并发情况下就要用到负载均衡，数据库主从
     6. 
+
+
+11. 提现工具和提现系统梳理
+     
