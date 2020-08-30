@@ -60,7 +60,7 @@
     * 并发，锁的机制（悲观锁）,事务隔离级别
     * 数据库调优经历 主从同步导致的数据不一致问题
     * CAS(Camper And Set)防止并发
-    * [1]( ://www.cnblogs.com/chenqionghe/p/4845693.html) [2](https://segmentfault.com/a/1190000012773157) [3](https://tech.meituan.com/2014/08/20/innodb-lock.html)行锁统计情况`show status like 'innodb_row_lock%';` 表锁使用情况`show open tables where in_use > 0;` `SHOW INNODB STATUS` 查看死锁
+    * [1]( https://www.cnblogs.com/chenqionghe/p/4845693.html) [2](https://segmentfault.com/a/1190000012773157) [3](https://tech.meituan.com/2014/08/20/innodb-lock.html)行锁统计情况`show status like 'innodb_row_lock%';` 表锁使用情况`show open tables where in_use > 0;` `SHOW INNODB STATUS` 查看死锁
 
     策略模式：自动支付有两种形式 -> 通过配置判断使用哪一种，实现多种策略
     模板模式：异步的自动支付 -> 固定的一个流程，paypal, 礼品卡, 等第三方服务异步方式请求支付结果。
@@ -119,4 +119,13 @@
 
 
 11. 提现工具和提现系统梳理
-     
+
+12. 为什么选择离职？你的职业规划是什么？ 
+
+    在目前这家公司的晋升和薪酬体制不完善，在公司工作三年虽然收获了很多，结识了很多有趣的人，但对于我的职业规划来说，目前公司不能给我很好的发展，另一方面目前公司的业务体量不是很大，在高并发高流量的技术应用和实践是欠缺的，我希望我学到的东西能够得到更多的实践。
+    职业规划，我希望成为一个架构师，所以为实现这个目标需要更多的项目实践。
+13. 评价自己的优缺点
+
+    我认为我的优点是
+     我的执行力不错，通常领导交代的任务我都能完成，冲KPI对我不是问题。但是正因为如此，我主动地深入思考就相对少了一些，更多是在行动上。如何站到更高的格局上去看待工作，如何思考战略布局，这类深度的专研我还需要加强。
+14. 你自己
